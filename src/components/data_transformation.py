@@ -1,3 +1,6 @@
+### Este .py nos permitirá realizar todas las transformaciones que haremos sobre los datasets.
+
+#Librerías
 import sys
 from dataclasses import dataclass
 
@@ -14,7 +17,7 @@ import os
 
 from src.utils import save_object
 
-@dataclass # muy importante usar Class para desarrollar todo esto y hacer las transformaciones
+@dataclass # muy importante usar Class para desarrollar todo esto y hacer las transformaciones. with the use of dataclass, one can directly define variables and their data types in a class.
 class DataTransformationConfig:
     preprocessor_obj_file_path=os.path.join('artifacts',"preprocessor.pkl") #preprocessor.pkl
 
@@ -24,7 +27,7 @@ class DataTransformation:
 
     def get_data_transformer_object(self): #try pass, except pass
         '''
-        This function is responsible for data trnasformation
+        This function is responsible for data transformation
         
         '''
         try:
@@ -39,7 +42,7 @@ class DataTransformation:
 # crearé el imputer matemático
             num_pipeline= Pipeline(
                 steps=[
-                ("imputer",SimpleImputer(strategy="median")),
+                ("imputer",SimpleImputer(strategy="median")), #estrategia del SimpleImputer será utilizar la mediana para rellenar missing values
                 ("scaler",StandardScaler()) #inicializo dentro de scaler el StandardScaler
 
                 ]
@@ -48,8 +51,8 @@ class DataTransformation:
             cat_pipeline=Pipeline(
 
                 steps=[
-                ("imputer",SimpleImputer(strategy="most_frequent")),
-                ("one_hot_encoder",OneHotEncoder()),
+                ("imputer",SimpleImputer(strategy="most_frequent")), #para Pipeline, la estrategia será utilizar el mas frecuente
+                ("one_hot_encoder",OneHotEncoder()), #inicializo dentro de one_hot_encoder el OneHotEnconder
                 ("scaler",StandardScaler(with_mean=False))
                 ]
 
@@ -73,7 +76,7 @@ class DataTransformation:
         except Exception as e:
             raise CustomException(e,sys)
         
-    def initiate_data_transformation(self,train_path,test_path):
+    def initiate_data_transformation(self,train_path,test_path): # con esta función iniciaré mi data tranformation
 
         try:
             train_df=pd.read_csv(train_path)
@@ -107,7 +110,7 @@ class DataTransformation:
             test_arr = np.c_[input_feature_test_arr, np.array(target_feature_test_df)]
 
             logging.info(f"Saved preprocessing object.")
-
+                                    #En Save_object definiremos donde salvar la ruta
             save_object(
 
                 file_path=self.data_transformation_config.preprocessor_obj_file_path,
@@ -121,4 +124,4 @@ class DataTransformation:
                 self.data_transformation_config.preprocessor_obj_file_path,
             )
         except Exception as e:
-            raise CustomException(e,sys)
+            raise CustomException(e,sys) #custom exception para saber cual es el error (cual sea el que salga)
