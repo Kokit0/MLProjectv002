@@ -10,6 +10,12 @@ from sklearn.model_selection import GridSearchCV
 
 from src.exception import CustomException
 
+"""
+Collection of utility functions defined
+in my file called utils.py
+for my machine learning project
+"""
+
 def save_object(file_path, obj):
     try:
         dir_path = os.path.dirname(file_path)
@@ -22,7 +28,7 @@ def save_object(file_path, obj):
     except Exception as e:
         raise CustomException(e, sys)
     
-def evaluate_models(X_train, y_train,X_test,y_test,models,param):
+def evaluate_models(X_train, y_train, X_test, y_test, models, param):
     try:
         report = {}
 
@@ -50,7 +56,7 @@ def evaluate_models(X_train, y_train,X_test,y_test,models,param):
 
         return report
 
-    except Exception as e:
+    except Exception as e: #This class is used for raising custom exceptions in case of any errors or exceptions in the code.
         raise CustomException(e, sys)
     
 def load_object(file_path):

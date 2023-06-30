@@ -20,23 +20,23 @@ from src.logger import logging
 from src.utils import save_object,evaluate_models
 
 @dataclass
-class ModelTrainerConfig:
-    trained_model_file_path=os.path.join("artifacts","model.pkl")
+class ModelTrainerConfig: #this will input whatever I require respect to my model training
+    trained_model_file_path=os.path.join("artifacts","model.pkl") # model.pickle file
 
 class ModelTrainer:
-    def __init__(self):
-        self.model_trainer_config=ModelTrainerConfig()
+    def __init__(self): #initialization function of my model
+        self.model_trainer_config=ModelTrainerConfig() #to start the training model
 
 
-    def initiate_model_trainer(self,train_array,test_array):
+    def initiate_model_trainer(self,train_array,test_array): 
         try:
-            logging.info("Split training and test input data")
+            logging.info("Split training and test input data") # tuples where i'm selecting all rows and all columns except the last column of the train_array and test_array.
             X_train,y_train,X_test,y_test=(
                 train_array[:,:-1],
                 train_array[:,-1],
                 test_array[:,:-1],
                 test_array[:,-1]
-            )
+            ) # now the models i want to try to predict
             models = {
                 "Random Forest": RandomForestRegressor(),
                 "Decision Tree": DecisionTreeRegressor(),
@@ -45,7 +45,7 @@ class ModelTrainer:
                 "XGBRegressor": XGBRegressor(),
                 "CatBoosting Regressor": CatBoostRegressor(verbose=False),
                 "AdaBoost Regressor": AdaBoostRegressor(),
-            }
+            } #a section for each of the models parameters
             params={
                 "Decision Tree": {
                     'criterion':['squared_error', 'friedman_mse', 'absolute_error', 'poisson'],
@@ -85,7 +85,7 @@ class ModelTrainer:
             }
 
             model_report:dict=evaluate_models(X_train=X_train,y_train=y_train,X_test=X_test,y_test=y_test,
-                                             models=models,param=params)
+                                             models=models,param=params) # evaluate_models will be a function in utils.py
             
             ## To get best model score from dict
             best_model_score = max(sorted(model_report.values()))
@@ -98,9 +98,10 @@ class ModelTrainer:
             best_model = models[best_model_name]
 
             if best_model_score<0.6:
-                raise CustomException("No best model found")
+                raise CustomException("No best model found: best_model_score<0.6")
             logging.info(f"Best found model on both training and testing dataset")
-
+            
+            # salvamos el model path
             save_object(
                 file_path=self.model_trainer_config.trained_model_file_path,
                 obj=best_model
